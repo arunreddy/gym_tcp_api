@@ -8,30 +8,21 @@
 #include <iostream>
 
 #include "environment.hpp"
+
 #include <mlpack/core.hpp>
 
-// Document program.
-PROGRAM_INFO("OpenGym with mlpack", "OpenGym with mlpack example");
-
-PARAM_STRING_IN("environment", "Atari environment to load",
-                "e", "CartPole-v0");
-
-
-using namespace mlpack;
 using namespace gym;
+using namespace mlpack;
 
 int main(int argc, char* argv[])
 {
-  // Parse Commandline
-  CLI::ParseCommandLine(argc, argv);
-  
+  const std::string environment = "CartPole-v0";
+  const std::string host = "127.0.0.1";
+  const std::string port = "4040";
+
   Log::Debug << "Compiled with debugging symbols." << std::endl;
 
   Log::Info << "Some test informational output." << std::endl;
-
-  const std::string environment = "SpaceInvaders-v0";
-  const std::string host = "127.0.0.1";
-  const std::string port = "4040";
 
   double totalReward = 0;
   size_t totalSteps = 0;

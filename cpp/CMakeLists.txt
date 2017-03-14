@@ -1,6 +1,9 @@
 cmake_minimum_required (VERSION 2.8)
 project(gym-tcp-api)
 
+# Include modules in the CMake directory.
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
 # Set the CFLAGS and CXXFLAGS.
 add_definitions("-Wno-deprecated-declarations")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
@@ -34,15 +37,35 @@ endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 set(Boost_ADDITIONAL_VERSIONS
   "1.49.0" "1.50.0" "1.51.0" "1.52.0" "1.53.0" "1.54.0" "1.55.0")
 
-find_package(Boost 1.49 COMPONENTS system thread iostreams)
+find_package(Boost 1.49 
+     COMPONENTS 
+       system 
+       thread 
+       iostreams
+       program_options
+       unit_test_framework
+       serialization
+     REQUIRED
+     )
 
 if (NOT Boost_FOUND)
   # Try again with non-multithreaded libraries ('mt' tag).
   set(Boost_USE_MULTITHREADED OFF)
-  find_package(Boost 1.49 COMPONENTS system thread iostreams REQUIRED)
+  find_package(Boost 1.49 
+       COMPONENTS
+         system
+         thread
+         iostreams
+         program_options
+         unit_test_framework
+         serialization
+       REQUIRED)
 endif()
 
+MESSAGE(STATUS "CMAKE MODULE PATH:: " ${CMAKE_MODULE_PATH})
+
 find_package(Armadillo 3.6.0 REQUIRED)
+find_package(Mlpack REQUIRED)
 
 # Include directories for the dependencies.
 include_directories(${CMAKE_SOURCE_DIR}/rapidjson)
@@ -50,6 +73,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${MLPACK_INCLUDE_DIR})
 
 MESSAGE(STATUS ${Boost_LIBRARIES})
 
@@ -71,4 +95,4 @@ set(gym_tcp_api_source
 # Define the executable and link against the libraries we need to build the
 # source.
 add_executable(example ${gym_tcp_api_source})
-target_link_libraries(example ${Boost_LIBRARIES} ${ARMADILLO_LIBRARIES})
+target_link_libraries(example ${Boost_LIBRARIES} ${ARMADILLO_LIBRARIES} ${MLPACK_LIBRARY})
